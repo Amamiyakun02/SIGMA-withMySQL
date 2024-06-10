@@ -1,9 +1,6 @@
-<?php
-$host = "localhost";
-$username = "amamiya";
-$dbname = "geojson";
-$password = "amamiyakun02";
 
+<?php
+include 'config.php';
 try {
     // Membuat koneksi PDO ke database
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
