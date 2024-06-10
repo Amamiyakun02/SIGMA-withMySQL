@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps Leaflet</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        #map{
+            height: 800px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Maps</h1>
+    <div id="map"></div>
+          
+    <script>
+        var pelaihari = [-3.7997999632620463, 114.76122075076779];
+        var map = L.map('map').setView(pelaihari, 16);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 25,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+ 
+        var customIcon = L.icon({
+                iconUrl: 'mark.png', // Ganti dengan path icon Anda
+                iconSize: [32, 32], // Ukuran icon
+                iconAnchor: [16, 32], // Point dimana icon akan di-anchored
+                popupAnchor: [0, -32] // Point dimana popup akan muncul relatif ke icon
+            });
+
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     fetch('lokasi.geojson')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             L.geoJSON(data, {
+        //                 pointToLayer: function (feature, latLng) {
+        //                     return L.marker(latLng, { icon: customIcon });
+        //                 },
+        //                 onEachFeature: function (feature, layer) {
+        //                     if (feature.properties && feature.properties.Nama) {
+        //                         layer.bindPopup(feature.properties.Nama);
+        //                     }
+        //                 },
+        //                 style: function (feature) {
+        //                     var color;
+        //                     return {
+        //                         fillOpacity: 0.8,
+        //                         weight: 1,
+        //                         opacity: 1,
+        //                         color: 'ff0000'
+        //                     }
+        //                 }
+        //             }).addTo(map);
+        //         })
+        //         .catch(error => console.error("Error Fetching GeoJSON data", error));
+        // });
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('http://localhost/SIG-GeoJSON/getdata.php')
+                .then(response => response.json())
+                .then(data => {
+                    L.geoJSON(data, {
+                        pointToLayer: function (feature, latLng) {
+                            console.log(latLng);
+                            return L.marker(latLng, { icon: customIcon });
+                        },
+                        onEachFeature: function (feature, layer) {
+                            if (feature.properties && feature.properties.nama_lokasi) {
+                                layer.bindPopup(feature.properties.nama_lokasi);
+                            }
+                        },
+                        style: function (feature) {
+                            console.log(feature.geometry.coordinates[0]);
+                            switch (feature.properties.jenis) {
+                                case 'mesjid':
+                                    color = "#FF0000"; // Merah
+                                    break;
+                                case 'taman':
+                                    color = "#0000FF"; // Biru
+                                    break;
+                                case 'pt':
+                                    color = "#FFFF00"; // Kuning
+                                    break;
+                                case 'rumah_sakit':
+                                    color = "#9BEC00"; // Kuning
+                                    break;
+                                case 'bank':
+                                    color = "#006769"; // Kuning
+                                    break;
+                                // Tambahkan lebih banyak jenis jika diperlukan
+                                default:
+                                    color = "#06D001"; // Hijau default
+                            }
+                            return {
+                                fillOpacity: 0.8,
+                                weight: 1,
+                                opacity: 1,
+                                color: color
+                            };
+                        }
+                    }).addTo(map);
+                })
+                .catch(error => console.error("Error Fetching GeoJSON data", error));
+            });
+            // fetch('http://localhost/maps-leaflet/sig-geojson/getdata.php')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         const coordinates = []; // Create an empty array to store coordinates
+
+            //         L.geoJSON(data, {
+            //         pointToLayer: function (feature, latLng) {
+            //             coordinates.push(latLng); // Add current latitude and longitude to 'coordinates' array
+            //             return L.marker(latLng, { icon: customIcon });
+            //             console.log(latLng);
+            //         },
+            //         });
+
+            //         console.log(coordinates); // Now you have an array of coordinates from the GeoJSON data
+            //     });
+    </script>
+</body>
+</html>
